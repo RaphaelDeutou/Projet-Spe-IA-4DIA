@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot de réservation</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Réservez votre vol avec Air Paradise ✈️</h1>
+
+    <div class="chat-container">
+      <div id="chatbox"></div>
+      <input type="text" id="userInput" placeholder="Posez votre question..." />
+      <button onclick="sendMessage()">Envoyer</button>
+    </div>
+
+    <script>
+      function sendMessage() {
+        let userInput = document.getElementById("userInput").value;
+        let chatbox = document.getElementById("chatbox");
+
+        if (userInput.trim() === "") return;
+
+        chatbox.innerHTML += `<p class="user-message">👤 ${userInput}</p>`;
+        document.getElementById("userInput").value = "";
+
+        fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userInput }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            chatbox.innerHTML += `<p class="bot-message">🤖 ${data.response}</p>`;
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+    </script>
+  </body>
+</html>
